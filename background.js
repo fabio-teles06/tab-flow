@@ -1,6 +1,15 @@
 let intervalId = null;
-let urlList = [];
-let currentIndex = 0;
+
+function getCurrentTab(callback) {
+  let queryOptions = { active: true, lastFocusedWindow: true };
+  chrome.tabs.query(queryOptions, ([tab]) => {
+    if (chrome.runtime.lastError)
+      console.error(chrome.runtime.lastError);
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    callback(tab);
+  });
+}
+
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.command === "start") {
@@ -11,15 +20,24 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       if (intervalId) clearInterval(intervalId);
       if (urlList.length === 0) return;
 
-      intervalId = setInterval(() => {
-        chrome.tabs.update({ url: urlList[currentIndex] });
-        currentIndex = (currentIndex + 1) % urlList.length;
-      }, msg.delay || 5000);
+      getCurrentTab((tab) => {
+        intervalId = setInterval(() => {
+          chrome.tabs.update(tab.id, { url: urlList[currentIndex] }, (tab) => {
+            if (chrome.runtime.lastError) {
+              console.error("Erro ao atualizar a aba:", chrome.runtime.lastError);
+              clearInterval(intervalId);
+              intervalId = null;
+            }
+          });
+          currentIndex = (currentIndex + 1) % urlList.length;
+        }, msg.delay || 5000);
+      })
     });
   }
 
   if (msg.command === "stop") {
     if (intervalId) clearInterval(intervalId);
     intervalId = null;
+    currentTabId = null;
   }
 });

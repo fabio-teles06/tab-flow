@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <style>
-    body { font-family: sans-serif; width: 250px; padding: 10px; }
+    body { font-family: sans-serif; min-width: 240px; padding: 10px; }
     textarea { width: 100%; height: 100px; }
     input, button { margin-top: 5px; width: 100%; box-sizing: border-box; }
     #status { color: green; font-size: 0.9em; display: none; text-align: center; }
@@ -22,8 +22,8 @@
   <label for="delay">Tempo entre trocas (segundos):</label>
   <input type="number" id="delay" min="1" value="5" />
 
-  <button id="save">Salvar Lista</button>
-  <button id="start">Iniciar Troca</button>
+  <button id="save">Salvar</button>
+  <button id="start">Iniciar</button>
   <button id="stop">Parar</button>
 
   <div id="status">Lista salva com sucesso!</div>

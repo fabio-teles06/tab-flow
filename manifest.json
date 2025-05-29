@@ -5,7 +5,8 @@
     "description": "Troca automaticamente entre URLs de uma lista.",
     "permissions": [
         "storage",
-        "tabs"
+        "tabs",
+        "activeTab"
     ],
     "action": {
         "default_popup": "popup.html",
