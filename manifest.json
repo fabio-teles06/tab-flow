@@ -5,7 +5,6 @@
     "description": "Troca automaticamente entre URLs de uma lista.",
     "permissions": [
         "storage",
-        "tabs",
         "activeTab"
     ],
     "action": {
