@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Tab Flow",
+    "name": "Simple bi Slider",
     "version": "1.1",
     "description": "Troca automaticamente entre URLs de uma lista.",
     "permissions": [
@@ -13,5 +13,15 @@
     },
     "background": {
         "service_worker": "background.js"
-    }
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "loader.html"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
 }

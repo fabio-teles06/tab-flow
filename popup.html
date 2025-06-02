@@ -6,7 +6,6 @@
     body { font-family: sans-serif; min-width: 240px; padding: 10px; }
     textarea { width: 100%; height: 100px; }
     input, button { margin-top: 5px; width: 100%; box-sizing: border-box; }
-    #status { color: green; font-size: 0.9em; display: none; text-align: center; }
     .dirty {
       background-color: #f8d7da;
       color: #721c24;
@@ -16,18 +15,13 @@
   </style>
 </head>
 <body>
-  <h3>Lista de URLs</h3>
-  <textarea id="urlList" placeholder="https://site1.com\nhttps://site2.com"></textarea>
-  
-  <label for="delay">Tempo entre trocas (segundos):</label>
-  <input type="number" id="delay" min="1" value="5" />
+  <h2>Bi Slider</h2>
 
-  <button id="save">Salvar</button>
-  <button id="start">Iniciar</button>
-  <button id="stop">Parar</button>
-
-  <div id="status">Lista salva com sucesso!</div>
-  <div id="loopStatus" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
+  <input type="text" id="url-input" placeholder="URL base (ex: https://app.powerbi.com/reportEmbed)" />
+  <textarea id="pages-area" placeholder="nomes das páginas separadas por linhas"></textarea>
+  <input type="number" id="interval-input" placeholder="Intervalo (ms)" value="1000" />
+  <button id="save-button">Salvar</button>
+  <button id="start-button">Iniciar</button>
 
   <script src="popup.js"></script>
 </body>

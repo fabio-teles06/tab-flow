@@ -1,57 +1,70 @@
-const urlTextarea = document.getElementById("urlList");
-const delayInput = document.getElementById("delay");
-const statusDiv = document.getElementById("status");
-const loopStatus = document.getElementById("loopStatus");
+const baseUrlInput = document.getElementById("url-input");
+const pageTextArea = document.getElementById("pages-area");
+const intervalInput = document.getElementById("interval-input");
+const startButton = document.getElementById("start-button");
+const saveButton = document.getElementById("save-button");
 
-// Carregar valores salvos
-chrome.storage.local.get(["urls", "delay", "looping"], (data) => {
-  if (data.urls) urlTextarea.value = data.urls.join("\n");
-  if (data.delay) delayInput.value = data.delay;
-  updateLoopStatus(data.looping);
+// const urlTextarea = document.getElementById("url");
+// const delayInput = document.getElementById("delay");
+// const offsetInput = document.getElementById("offset");
+// const statusDiv = document.getElementById("status");
+
+chrome.storage.local.get(["baseUrl", "pages", "interval"], (data) => {
+  if (data.baseUrl) {
+    baseUrlInput.value = data.baseUrl;
+  }
+  if (data.pages) {
+    pageTextArea.value = data.pages.join("\n");
+  }
+  if (data.interval) {
+    intervalInput.value = data.interval;
+  }
 });
 
-function updateLoopStatus(isRunning) {
-  loopStatus.textContent = isRunning ? "⏳ Loop ativo" : "⛔ Loop parado";
-  loopStatus.style.color = isRunning ? "green" : "red";
-}
+saveButton.addEventListener("click", () => {
+  const baseUrl = baseUrlInput.value.trim();
+  const pages = pageTextArea.value.split("\n").map(page => page.trim()).filter(page => page);
+  const interval = parseInt(intervalInput.value) || 5;
 
-// Salvar lista e delay
-urlTextarea.addEventListener("input", () => {
-  urlTextarea.classList.add("dirty");
-});
-
-delayInput.addEventListener("input", () => {
-  delayInput.classList.add("dirty");
-});
-
-document.getElementById("save").addEventListener("click", () => {
-  const urls = urlTextarea.value
-    .split("\n")
-    .map(url => url.trim())
-    .filter(url => url);
-  const delay = parseInt(delayInput.value) || 5;
-
-  urlTextarea.classList.remove("dirty");
-  delayInput.classList.remove("dirty");
-
-  chrome.storage.local.set({ urls, delay }, () => {
-    statusDiv.style.display = "block";
-    statusDiv.textContent = "Lista salva com sucesso!";
-    setTimeout(() => statusDiv.style.display = "none", 2000);
+  chrome.storage.local.set({ pages, interval, baseUrl }, () => {
+    console.log("Pages and interval saved.");
+    alert("Configurações salvas com sucesso!");
   });
 });
 
-// Iniciar troca
-document.getElementById("start").addEventListener("click", () => {
-  const delay = parseInt(delayInput.value) || 5;
-  chrome.runtime.sendMessage({ command: "start", delay: delay * 1000 }); // converte para ms
-  chrome.storage.local.set({ looping: true });
-  updateLoopStatus(true);
+startButton.addEventListener("click", () => {
+
+  chrome.storage.local.get(["baseUrl", "pages", "interval"], (data) => {
+    const baseUrl = data.baseUrl || baseUrlInput.value.trim();
+    const pages = data.pages || pageTextArea.value.split("\n").map(page => page.trim()).filter(page => page);
+    const interval = data.interval || parseInt(intervalInput.value) || 5;
+
+    if (!baseUrl) {
+      alert("Por favor, insira uma URL base.");
+      return;
+    }
+
+    if (pages.length === 0) {
+      alert("Por favor, insira pelo menos uma página.");
+      return;
+    }
+
+    chrome.runtime.sendMessage({ command: "start", baseUrl, pages, interval });
+  });
 });
 
-// Parar troca
-document.getElementById("stop").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ command: "stop" });
-  chrome.storage.local.set({ looping: false });
-  updateLoopStatus(false);
-});
+// // Iniciar troca
+
+// document.getElementById("start").addEventListener("click", () => {
+//   const url = urlTextarea.value.trim();
+//   const delay = parseInt(delayInput.value) || 5;
+//   const offset = parseInt(offsetInput.value) || 61;
+//   chrome.runtime.sendMessage({ command: "start" });
+// });
+
+// document.getElementById("open").addEventListener("click", () => {
+//   const url = urlTextarea.value.trim();
+//   const delay = parseInt(delayInput.value) || 5;
+//   const offset = parseInt(offsetInput.value) || 61;
+//   chrome.runtime.sendMessage({ command: "open", delay: delay * 1000, url, offset: offset });
+// });
