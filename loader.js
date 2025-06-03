@@ -27,8 +27,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 
 function startCycling() {
-  console.log(delay, baseUrl, pageList);
-
   pageList.forEach((page, index) => {
     const viewer = document.createElement("iframe");
     viewer.id = `viewer-${index}`;
@@ -51,3 +49,13 @@ function cyclePages() {
   }
   currentIndex = (currentIndex + 1) % pageList.length;
 }
+
+function reloadAllIframes() {
+  iframeRefs.forEach((iframe) => {
+    iframe.src = iframe.src; // Força recarregamento
+  });
+}
+
+setInterval(() => {
+  reloadAllIframes();
+}, 3600 * 1000); // 1 hora
